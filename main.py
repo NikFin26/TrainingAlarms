@@ -4,4 +4,7 @@ from AlarmMenu import *
 
 if __name__ == '__main__':
     InitialAlarmBase()
-    InitAlarmMainMenu()
+
+    App = MainWin()
+    App.mainloop()
+
