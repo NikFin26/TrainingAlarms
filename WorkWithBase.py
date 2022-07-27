@@ -25,7 +25,6 @@ def AlarmBaseReading():
     cur.execute("SELECT * FROM alarms;")
     all_results = cur.fetchall()
     db.close()
-    print(all_results)
     return all_results
 
 

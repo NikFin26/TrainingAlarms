@@ -124,14 +124,20 @@ class DataWin(tk.Toplevel):
 
         # Чтение Базы и заполнение
         current_base = AlarmBaseReading()
-        for row in current_base:
-            self.tree.insert('', 'end', values=row)
+
+
+        if current_base == [] :
+            self.tree.insert('', 'end', values=['', '', '', '', ''])
+        else:
+            for row in current_base:
+                self.tree.insert('', 'end', values=row)
 
         # Кнопка
         self.button_exit = tk.Button(self, text="Закрыть", command=self.destroy)
 
-        # Отрисовка
+        # Отрисовка дерева
         self.tree.pack(padx=0)
+
         self.button_exit.pack(pady=5, ipadx=2, ipady=2, side=tk.RIGHT)
 
         # Присвоение event к клику мыши
