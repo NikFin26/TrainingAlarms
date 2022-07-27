@@ -90,21 +90,34 @@ class DataWin(tk.Toplevel):
                         anchor='nw')
             entry.insert(0, value)
 
-            def DeleteRecord(event):
-                print('ok')
-
             # Связь event с нажатием
             entry.bind('<FocusOut>', lambda e: entry.destroy())
             entry.bind('<Return>', ok)
-            entry.bind('<1>', ok)
-            entry.bind('<Delete>', DeleteRecord)
+            entry.bind('<FocusOut>', ok)
             entry.focus_set()
 
         # Работа с заполненными данными
         def RowFilling(tree, column, row):
-            tree.curItem = tree.focus()
-            tree.contents = tree.item(tree.curItem)
-            if '' not in tree.contents['values'][1:]: DataSave(tree.contents['values'])
+            curitem = tree.focus()
+            contents = tree.item(curitem)
+            DataSave(contents['values'])
+            FillingTree(self.tree)
+
+        def FillingTree(tree):
+            base = AlarmBaseReading()
+            if base == []:
+                self.tree.insert('', 'end', values=['', '', '', '', ''])
+            else:
+                tree.delete(*tree.get_children())
+                for row in base:
+                    self.tree.insert('', 'end', values=row)
+
+        def DeleteRecord(event):
+            if self.tree.identify_region(event.x, event.y) == 'cell':
+                row_id = self.tree.focus()
+                data = self.tree.item(row_id)
+                self.tree.delete(row_id)
+                DelData(str(data['values'][0]))
 
 
         # Таблица
@@ -123,23 +136,16 @@ class DataWin(tk.Toplevel):
         self.tree.configure(yscrollcommand=ysb.set)
 
         # Чтение Базы и заполнение
-        current_base = AlarmBaseReading()
-
-
-        if current_base == [] :
-            self.tree.insert('', 'end', values=['', '', '', '', ''])
-        else:
-            for row in current_base:
-                self.tree.insert('', 'end', values=row)
+        FillingTree(self.tree)
 
         # Кнопка
         self.button_exit = tk.Button(self, text="Закрыть", command=self.destroy)
 
         # Отрисовка дерева
         self.tree.pack(padx=0)
-
         self.button_exit.pack(pady=5, ipadx=2, ipady=2, side=tk.RIGHT)
 
         # Присвоение event к клику мыши
         self.tree.bind('<Double-Button-1>', edit)
+        self.tree.bind('<Delete>', DeleteRecord)
 
